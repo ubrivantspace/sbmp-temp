@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>College Content</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts: Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;800&display=swap" rel="stylesheet">
+    <style>
+        /* Custom styles for the page */
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+
+        /* Style for the vertical blinds effect */
+        .blinds-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(to right, rgba(255, 255, 255, 0.1) 1px, transparent 1px);
+            background-size: 20px 100%;
+            pointer-events: none; /* Allows clicks to pass through */
+        }
+
+        /* Custom class for the glassmorphism effect */
+        .glass-card {
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px); /* For Safari */
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        /* Styles for modals */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(0, 0, 0, 0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 50;
+            transition: opacity 0.3s ease;
+        }
+    </style>
+</head>
+<body class="bg-gray-900 text-white">
+
+    <div class="relative min-h-screen w-full overflow-hidden">
+        <!-- Background Image -->
+        <div class="absolute inset-0 z-0">
+            <img src="https://images.unsplash.com/photo-1562774053-701939374585?q=80&w=2070&auto=format&fit=crop" 
+                 alt="Modern university building" 
+                 class="w-full h-full object-cover filter blur-sm">
+            <div class="absolute inset-0 bg-black/30"></div> <!-- Dark overlay -->
+            <div class="blinds-overlay"></div> <!-- Vertical lines overlay -->
+        </div>
+
+        <!-- Main Content Wrapper -->
+        <div class="relative z-10 flex flex-col min-h-screen p-4 sm:p-6 lg:p-8">
+            
+            <!-- Header Navigation -->
+            <header class="w-full max-w-7xl mx-auto">
+                <nav class="flex items-center justify-between gap-4">
+                    <!-- Home Button -->
+                    <button class="glass-card px-4 py-2 rounded-lg text-sm font-semibold hover:bg-white/25 transition-colors duration-300">
+                        Home
+                    </button>
+
+                    <!-- Search Bar -->
+                    <div class="flex-grow max-w-md">
+                        <div class="glass-card flex items-center rounded-lg px-3 py-1">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-white/70"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+                            <input type="text" placeholder="Search for content" class="w-full bg-transparent text-white placeholder-white/70 focus:outline-none pl-2">
+                        </div>
+                    </div>
+
+                    <!-- Menu Button with Dropdown -->
+                    <div class="relative">
+                        <button id="menu-button" class="glass-card p-2 rounded-lg hover:bg-white/25 transition-colors duration-300">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-white"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
+                        </button>
+                        <!-- Dropdown Menu -->
+                        <div id="menu-dropdown" class="hidden absolute right-0 mt-2 w-48 glass-card rounded-lg shadow-lg py-1 z-20">
+                            <a href="#" id="admin-login-link" class="block px-4 py-2 text-sm text-white hover:bg-white/10 transition-colors duration-200">Admin Login</a>
+                        </div>
+                    </div>
+                </nav>
+            </header>
+
+            <!-- Main Content Card -->
+            <main class="flex-grow flex items-center justify-center">
+                <div class="w-full max-w-2xl mx-auto p-8 sm:p-10 md:p-12 glass-card rounded-2xl shadow-2xl">
+                    <h1 class="text-center text-3xl sm:text-4xl md:text-5xl font-bold mb-8 md:mb-12">
+                        Get Your College Content
+                    </h1>
+                    
+                    <!-- Semester Buttons Grid -->
+                    <div id="semester-grid" class="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
+                        <!-- Semester buttons will be dynamically inserted here -->
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <!-- Admin Login Modal -->
+    <div id="login-modal" class="modal-overlay hidden">
+        <div class="w-full max-w-sm mx-auto p-8 glass-card rounded-2xl shadow-2xl relative">
+            <button id="close-login-modal" class="absolute top-4 right-4 text-white/70 hover:text-white text-2xl font-bold">&times;</button>
+            <h2 class="text-2xl font-bold text-center mb-6">Admin Login</h2>
+            <form id="login-form">
+                <div class="mb-4">
+                    <label for="username" class="block mb-2 text-sm font-medium">Username</label>
+                    <input type="text" id="username" class="w-full p-2 bg-white/10 rounded-lg focus:outline-none focus:ring-2 focus:ring-white/50" value="admin">
+                </div>
+                <div class="mb-6">
+                    <label for="password" class="block mb-2 text-sm font-medium">Password</label>
+                    <input type="password" id="password" class="w-full p-2 bg-white/10 rounded-lg focus:outline-none focus:ring-2 focus:ring-white/50" value="password">
+                </div>
+                <button type="submit" class="w-full py-2 bg-blue-600 hover:bg-blue-700 rounded-lg font-semibold transition-colors">Login</button>
+                <p id="login-error" class="text-red-400 text-sm mt-2 text-center"></p>
+            </form>
+        </div>
+    </div>
+
+    <!-- Admin Panel Modal -->
+    <div id="admin-panel-modal" class="modal-overlay hidden">
+        <div class="w-full max-w-md mx-auto p-8 glass-card rounded-2xl shadow-2xl relative">
+             <h2 class="text-2xl font-bold text-center mb-6">Admin Panel</h2>
+            <form id="add-semester-form" class="mb-6">
+                <div class="mb-4">
+                    <label for="semester-name" class="block mb-2 text-sm font-medium">New Semester Name</label>
+                    <input type="text" id="semester-name" class="w-full p-2 bg-white/10 rounded-lg focus:outline-none focus:ring-2 focus:ring-white/50" placeholder="e.g., Semester - VII">
+                </div>
+                <button type="submit" class="w-full py-2 bg-green-600 hover:bg-green-700 rounded-lg font-semibold transition-colors">Add Semester</button>
+            </form>
+            
+            <hr class="my-4 border-white/20">
+
+            <!-- Dynamic list of semesters to manage -->
+            <h3 class="text-lg font-semibold mb-2">Manage Semesters</h3>
+            <div id="manage-semesters-list" class="space-y-2 max-h-48 overflow-y-auto pr-2">
+                <!-- List of semesters will be dynamically inserted here -->
+            </div>
+
+            <hr class="my-4 border-white/20">
+            <button id="logout-button" class="w-full py-2 bg-red-600 hover:bg-red-700 rounded-lg font-semibold transition-colors">Logout</button>
+        </div>
+    </div>
+
+
+    <!-- JavaScript for All Functionality -->
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // --- DOM Elements ---
+            const menuButton = document.getElementById('menu-button');
+            const menuDropdown = document.getElementById('menu-dropdown');
+            const semesterGrid = document.getElementById('semester-grid');
+            const adminLoginLink = document.getElementById('admin-login-link');
+            const loginModal = document.getElementById('login-modal');
+            const closeLoginModalBtn = document.getElementById('close-login-modal');
+            const loginForm = document.getElementById('login-form');
+            const loginError = document.getElementById('login-error');
+            const adminPanelModal = document.getElementById('admin-panel-modal');
+            const addSemesterForm = document.getElementById('add-semester-form');
+            const logoutButton = document.getElementById('logout-button');
+            const manageSemestersList = document.getElementById('manage-semesters-list');
+
+            // --- State Management ---
+            const STORAGE_KEY = 'collegeSemesters';
+            const defaultSemesters = [
+                'Semester - I', 'Semester - II', 'Semester - III', 
+                'Semester - IV', 'Semester - V', 'Semester - VI'
+            ];
+            let semesters = [];
+            let isAdminLoggedIn = false;
+            
+            /**
+             * Loads semesters from localStorage or uses defaults.
+             */
+            const loadSemesters = () => {
+                const storedSemesters = localStorage.getItem(STORAGE_KEY);
+                if (storedSemesters) {
+                    semesters = JSON.parse(storedSemesters);
+                } else {
+                    semesters = [...defaultSemesters];
+                }
+            };
+
+            /**
+             * Saves the current semester list to localStorage.
+             */
+            const saveSemesters = () => {
+                localStorage.setItem(STORAGE_KEY, JSON.stringify(semesters));
+            };
+
+
+            // --- Functions ---
+
+            /**
+             * Renders the semester buttons on the main page.
+             */
+            const renderSemesters = () => {
+                semesterGrid.innerHTML = ''; // Clear existing buttons
+                semesters.forEach(semester => {
+                    const button = document.createElement('button');
+                    button.className = 'text-lg font-medium py-3 px-6 glass-card rounded-xl hover:bg-white/25 transition-colors duration-300 focus:outline-none focus:ring-2 focus:ring-white/50';
+                    button.textContent = semester;
+                    semesterGrid.appendChild(button);
+                });
+            };
+
+            /**
+             * Renders the list of semesters in the admin panel for management.
+             */
+            const renderAdminSemesterList = () => {
+                manageSemestersList.innerHTML = ''; // Clear the list
+                if (semesters.length === 0) {
+                    manageSemestersList.innerHTML = `<p class="text-white/50 text-center">No semesters found.</p>`;
+                    return;
+                }
+                semesters.forEach((semester, index) => {
+                    const listItem = document.createElement('div');
+                    listItem.className = 'flex items-center justify-between bg-white/5 p-2 rounded-lg';
+                    
+                    const text = document.createElement('span');
+                    text.textContent = semester;
+                    listItem.appendChild(text);
+
+                    const removeButton = document.createElement('button');
+                    removeButton.textContent = 'Remove';
+                    removeButton.className = 'text-xs bg-red-500 hover:bg-red-600 text-white font-bold py-1 px-2 rounded-md transition-colors';
+                    removeButton.onclick = () => handleDeleteSemester(index);
+                    listItem.appendChild(removeButton);
+
+                    manageSemestersList.appendChild(listItem);
+                });
+            };
+
+            /**
+             * Toggles the visibility of a modal.
+             * @param {HTMLElement} modal - The modal element to toggle.
+             * @param {boolean} show - True to show, false to hide.
+             */
+            const toggleModal = (modal, show) => {
+                if (show) {
+                    modal.classList.remove('hidden');
+                } else {
+                    modal.classList.add('hidden');
+                }
+            };
+
+            /**
+             * Handles the admin login process.
+             */
+            const handleLogin = (event) => {
+                event.preventDefault();
+                const username = loginForm.username.value;
+                const password = loginForm.password.value;
+
+                // IMPORTANT: This is a mock login.
+                if (username === 'admin' && password === 'password') {
+                    isAdminLoggedIn = true;
+                    toggleModal(loginModal, false);
+                    toggleModal(adminPanelModal, true);
+                    renderAdminSemesterList(); // Populate the admin list on login
+                    loginError.textContent = '';
+                    loginForm.reset();
+                } else {
+                    loginError.textContent = 'Invalid username or password.';
+                }
+            };
+
+            /**
+             * Handles adding a new semester.
+             */
+            const handleAddSemester = (event) => {
+                event.preventDefault();
+                const semesterNameInput = document.getElementById('semester-name');
+                const newSemesterName = semesterNameInput.value.trim();
+
+                if (newSemesterName && !semesters.includes(newSemesterName)) {
+                    semesters.push(newSemesterName);
+                    saveSemesters(); // Save changes to localStorage
+                    renderSemesters(); // Re-render the main grid
+                    renderAdminSemesterList(); // Re-render the admin list
+                    semesterNameInput.value = ''; // Clear input
+                } else if (semesters.includes(newSemesterName)) {
+                    semesterNameInput.classList.add('ring-2', 'ring-red-500');
+                    setTimeout(() => semesterNameInput.classList.remove('ring-2', 'ring-red-500'), 2000);
+                }
+            };
+
+            /**
+             * Handles deleting a semester by its index in the array.
+             * @param {number} index - The index of the semester to delete.
+             */
+            const handleDeleteSemester = (index) => {
+                semesters.splice(index, 1); // Remove the item from the array
+                saveSemesters(); // Save changes to localStorage
+                renderSemesters(); // Update the main page grid
+                renderAdminSemesterList(); // Update the admin panel list
+            };
+            
+            /**
+             * Handles the admin logout process.
+             */
+            const handleLogout = () => {
+                isAdminLoggedIn = false;
+                toggleModal(adminPanelModal, false);
+            };
+
+            // --- Event Listeners ---
+            menuButton.addEventListener('click', (event) => {
+                event.stopPropagation();
+                menuDropdown.classList.toggle('hidden');
+            });
+            window.addEventListener('click', () => {
+                if (!menuDropdown.classList.contains('hidden')) {
+                    menuDropdown.classList.add('hidden');
+                }
+            });
+            adminLoginLink.addEventListener('click', (e) => {
+                e.preventDefault();
+                menuDropdown.classList.add('hidden');
+                toggleModal(loginModal, true);
+            });
+            closeLoginModalBtn.addEventListener('click', () => toggleModal(loginModal, false));
+            loginForm.addEventListener('submit', handleLogin);
+            addSemesterForm.addEventListener('submit', handleAddSemester);
+            logoutButton.addEventListener('click', handleLogout);
+
+            // --- Initial Load ---
+            loadSemesters();
+            renderSemesters();
+        });
+    </script>
+</body>
+</html>
